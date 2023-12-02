@@ -2,7 +2,7 @@ This is a new [**React Native**](https://reactnative.dev) project, bootstrapped 
 
 # Getting Started
 
-> **Note**: It has been published on the Android market. Anyone interested can download and use it from this link [CoinPulse](https://reactnative.dev/docs/environment-setup).
+> **Note**: It has been published on the Android market. Anyone interested can download and use it from this link [CoinPulse](https://play.google.com/store/apps/details?id=com.cryptoprice).
 
 ## Create keystore:
 
@@ -11,5 +11,3 @@ Create .keystore file for debug build. And move to file --> android/app/debug.ke
 ```bash
 keytool -genkeypair -v -storetype PKCS12 -keystore debug.keystore -alias androiddebugkey -keyalg RSA -keysize 2048 -validity 10000
 ```
-
-
