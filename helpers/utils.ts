@@ -20,5 +20,5 @@ export const formatMoney = function (money: number) {
   if (Math.abs(money) < 1) return moneyFormatter.format(money);
   let fixedMoney = Number(money.toFixed(2));
   if (fixedMoney - Math.floor(fixedMoney) == 0) return moneyFormatterZeroDecimal.format(fixedMoney);
-  return moneyFormatter.format(Number(money.toFixed(2)));
+  return moneyFormatter.format(fixedMoney);
 };
