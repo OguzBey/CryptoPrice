@@ -1,5 +1,6 @@
 import React, { memo, useRef } from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { fixedString } from '../helpers/utils';
 
 type CoinListItemProps = {
   coinName: string;
@@ -13,7 +14,17 @@ type CoinListItemProps = {
   priceChange24h: number;
 };
 
-const CoinListItem = ({ coinName, logoUri, price, rank, selectFunc, symbol, borderColor, priceChange24h, priceChange24hPercentage }: CoinListItemProps) => {
+const CoinListItem = ({
+  coinName,
+  logoUri,
+  price,
+  rank,
+  selectFunc,
+  symbol,
+  borderColor,
+  priceChange24h,
+  priceChange24hPercentage,
+}: CoinListItemProps) => {
   console.log('CoinListItem rendered!', coinName);
   const textStylePercentage = priceChange24h && priceChange24h > 0 ? styles.textGreen : styles.textRed;
   return (
@@ -21,11 +32,12 @@ const CoinListItem = ({ coinName, logoUri, price, rank, selectFunc, symbol, bord
       style={[styles.container, borderColor == 'white' ? styles.selectedContainer : styles.deSelectedContainer]}
       onPress={() => {
         selectFunc(symbol);
-      }}>
+      }}
+    >
       <View style={[styles.itemInfoGroup, { justifyContent: 'flex-start', flex: 2 }]}>
         <Text style={[styles.textStyle, styles.textWhite, { marginLeft: 5 }]}>{rank}</Text>
         <Image source={{ uri: logoUri }} style={[styles.coinLogo, { marginLeft: 5 }]} />
-        <Text style={[styles.textStyle, styles.textWhite, { marginLeft: 10 }]}>{coinName}</Text>
+        <Text style={[styles.textStyle, styles.textWhite, { marginLeft: 10 }]}>{fixedString(coinName)}</Text>
       </View>
 
       <View style={[styles.itemInfoGroup]}>

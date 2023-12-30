@@ -22,3 +22,9 @@ export const formatMoney = function (money: number) {
   if (fixedMoney - Math.floor(fixedMoney) == 0) return moneyFormatterZeroDecimal.format(fixedMoney);
   return moneyFormatter.format(fixedMoney);
 };
+
+export const fixedString = function (strVal: string, maxLen = 10) {
+  if (strVal.length > maxLen && strVal[maxLen - 1] != ' ') return `${strVal.slice(0, maxLen)}...`;
+  else if (strVal.length > maxLen && strVal[maxLen - 1] == ' ') return `${strVal.slice(0, maxLen + 2)}...`;
+  else return strVal;
+};

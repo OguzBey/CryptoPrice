@@ -1,10 +1,14 @@
-import { CoinMarketsResponseItem, fetchCryptoData } from '../api/coingecko';
+import { CoinMarketsResponseItem } from '../api/coingecko';
 import { formatMoney, numberFormatter } from '../helpers/utils';
 import CoinInfo from '../components/coin-info';
 import CoinListItem from '../components/coin-item';
 import CoinPrice from '../components/coin-price';
 import { memo, useCallback, useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ParamListBase } from '@react-navigation/native';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { RootState } from '../redux/store';
+import { useSelector } from 'react-redux';
 
 type SortByTypes = 'rankDesc' | 'rankAsc' | 'priceDesc' | 'priceAsc' | 'changePercentageAsc' | 'changePercentageDesc';
 
@@ -31,7 +35,9 @@ function GetCoinListItems(coinInfoData: CoinMarketsResponseItem[], selectCoinFun
   return listItems;
 }
 
-function Home(): JSX.Element {
+type HomeScreenProps = NativeStackScreenProps<ParamListBase, 'Home'>;
+
+const Home: React.FC<HomeScreenProps> = () => {
   console.log('Home screen rendered!');
   const [coinInfoData, setCoinInfoData] = useState<CoinMarketsResponseItem[]>([]);
   const [volume, setVolume] = useState('$0');
@@ -45,7 +51,6 @@ function Home(): JSX.Element {
   const [selectedSymbol, setSelectedSymbol] = useState('');
   const [animatingVal, setAnimatingVal] = useState(true);
   const [sortBy, setSortBy] = useState<SortByTypes>('rankDesc');
-
   const [coinDetail, setCoinDetail] = useState({
     name: '',
     logoUri: 'https://cryptologos.cc/logos/bitcoin-btc-logo.png',
@@ -53,6 +58,8 @@ function Home(): JSX.Element {
     rank: 0,
     symbol: '',
   });
+
+  const top100Data = useSelector((state: RootState) => state.top100Data);
 
   const changeData = useCallback((coin: CoinMarketsResponseItem) => {
     setVolume(formatMoney(coin.total_volume));
@@ -132,91 +139,21 @@ function Home(): JSX.Element {
   );
 
   useEffect(() => {
-    const fetchDataProcess = async () => {
-      console.log('Data Fetched()');
-      const data = await fetchCryptoData(100);
-
-      // const data = [
-      //   {
-      //     ath: 69045,
-      //     ath_change_percentage: -47.17604,
-      //     ath_date: '2021-11-10T14:24:11.849Z',
-      //     atl: 67.81,
-      //     atl_change_percentage: 53686.63565,
-      //     atl_date: '2013-07-06T00:00:00.000Z',
-      //     circulating_supply: 19549856,
-      //     current_price: 36481,
-      //     fully_diluted_valuation: 765811934680,
-      //     high_24h: 37410,
-      //     id: 'bitcoin',
-      //     image: 'https://assets.coingecko.com/coins/images/1/large/bitcoin.png?1696501400',
-      //     last_updated: '2023-11-22T16:34:06.614Z',
-      //     low_24h: 35788,
-      //     market_cap: 712929192670,
-      //     market_cap_change_24h: -9327985672.73877,
-      //     market_cap_change_percentage_24h: -1.2915,
-      //     market_cap_rank: 1,
-      //     max_supply: 21000000,
-      //     name: 'Bitcoin',
-      //     price_change_24h: -420.66899453338556,
-      //     price_change_percentage_24h: -1.13998,
-      //     price_change_percentage_24h_in_currency: -1.1399828786308033,
-      //     roi: null,
-      //     symbol: 'btc',
-      //     total_supply: 21000000,
-      //     total_volume: 23232690758,
-      //   },
-      //   {
-      //     ath: 4878.26,
-      //     ath_change_percentage: -58.13213,
-      //     ath_date: '2021-11-10T14:24:19.604Z',
-      //     atl: 0.432979,
-      //     atl_change_percentage: 471614.4701,
-      //     atl_date: '2015-10-20T00:00:00.000Z',
-      //     circulating_supply: 120249014.661258,
-      //     current_price: 2040.17,
-      //     fully_diluted_valuation: 245108550824,
-      //     high_24h: 2049.4,
-      //     id: 'ethereum',
-      //     image: 'https://assets.coingecko.com/coins/images/279/large/ethereum.png?1696501628',
-      //     last_updated: '2023-11-22T16:34:16.070Z',
-      //     low_24h: 1940.08,
-      //     market_cap: 245108550824,
-      //     market_cap_change_24h: 5330015893,
-      //     market_cap_change_percentage_24h: 2.22289,
-      //     market_cap_rank: 2,
-      //     max_supply: null,
-      //     name: 'Ethereum',
-      //     price_change_24h: 54.03,
-      //     price_change_percentage_24h: 2.72047,
-      //     price_change_percentage_24h_in_currency: 2.720465266988783,
-      //     roi: { currency: 'btc', percentage: 7378.726604691019, times: 73.78726604691019 },
-      //     symbol: 'eth',
-      //     total_supply: 120249014.661258,
-      //     total_volume: 25883988805,
-      //   },
-      // ];
-      // const data = [];
-
-      if (data.length > 0) {
-        setCoinInfoData(data);
-        setAnimatingVal(false);
-        const selectedCoin = data.sort((a, b) => {
-          if (a.market_cap_rank > b.market_cap_rank) {
-            return 1;
-          } else if (a.market_cap_rank < b.market_cap_rank) {
-            return -1;
-          }
-          return 0;
-        })[0];
-        changeData(selectedCoin);
-      } else {
-        Alert.alert('Error..', 'Api rate-limit. Please try again later.');
-      }
-    };
-
-    fetchDataProcess();
-  }, []);
+    console.log('HomeSCreen UseEffect()');
+    if (top100Data.length > 0) {
+      setAnimatingVal(false);
+      setCoinInfoData(top100Data);
+      const selectedCoin = top100Data.slice().sort((a, b) => {
+        if (a.market_cap_rank > b.market_cap_rank) {
+          return 1;
+        } else if (a.market_cap_rank < b.market_cap_rank) {
+          return -1;
+        }
+        return 0;
+      })[0];
+      changeData(selectedCoin);
+    }
+  }, [top100Data]);
 
   return (
     <View style={styles.container}>
@@ -305,7 +242,7 @@ function Home(): JSX.Element {
       )}
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
