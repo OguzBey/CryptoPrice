@@ -91,49 +91,51 @@ const Home: React.FC<HomeScreenProps> = () => {
 
   const changeSort = useCallback(
     (selectedArrow: 'rank' | 'price' | 'percentageChange', currentSortBy: SortByTypes) => {
+      const currentData = [...coinInfoData];
       if (selectedArrow == 'rank' && currentSortBy != 'rankAsc') {
         setSortBy('rankAsc');
-        coinInfoData.sort((firstVal, secVal) => {
+        currentData.sort((firstVal, secVal) => {
           if (firstVal.market_cap_rank > secVal.market_cap_rank) return -1;
           else if (firstVal.market_cap_rank < secVal.market_cap_rank) return 1;
           else return 0;
         });
       } else if (selectedArrow == 'rank' && currentSortBy != 'rankDesc') {
         setSortBy('rankDesc');
-        coinInfoData.sort((firstVal, secVal) => {
+        currentData.sort((firstVal, secVal) => {
           if (firstVal.market_cap_rank > secVal.market_cap_rank) return 1;
           else if (firstVal.market_cap_rank < secVal.market_cap_rank) return -1;
           else return 0;
         });
       } else if (selectedArrow == 'price' && currentSortBy != 'priceAsc') {
         setSortBy('priceAsc');
-        coinInfoData.sort((firstVal, secVal) => {
+        currentData.sort((firstVal, secVal) => {
           if (firstVal.current_price > secVal.current_price) return 1;
           else if (firstVal.current_price < secVal.current_price) return -1;
           else return 0;
         });
       } else if (selectedArrow == 'price' && currentSortBy != 'priceDesc') {
         setSortBy('priceDesc');
-        coinInfoData.sort((firstVal, secVal) => {
+        currentData.sort((firstVal, secVal) => {
           if (firstVal.current_price > secVal.current_price) return -1;
           else if (firstVal.current_price < secVal.current_price) return 1;
           else return 0;
         });
       } else if (selectedArrow == 'percentageChange' && currentSortBy != 'changePercentageAsc') {
         setSortBy('changePercentageAsc');
-        coinInfoData.sort((firstVal, secVal) => {
+        currentData.sort((firstVal, secVal) => {
           if (firstVal.price_change_percentage_24h > secVal.price_change_percentage_24h) return 1;
           else if (firstVal.price_change_percentage_24h < secVal.price_change_percentage_24h) return -1;
           else return 0;
         });
       } else if (selectedArrow == 'percentageChange' && currentSortBy != 'changePercentageDesc') {
         setSortBy('changePercentageDesc');
-        coinInfoData.sort((firstVal, secVal) => {
+        currentData.sort((firstVal, secVal) => {
           if (firstVal.price_change_percentage_24h > secVal.price_change_percentage_24h) return -1;
           else if (firstVal.price_change_percentage_24h < secVal.price_change_percentage_24h) return 1;
           else return 0;
         });
       }
+      setCoinInfoData(currentData);
     },
     [coinInfoData]
   );
@@ -143,6 +145,7 @@ const Home: React.FC<HomeScreenProps> = () => {
     if (top100Data.length > 0) {
       setAnimatingVal(false);
       setCoinInfoData(top100Data);
+      setSortBy('rankDesc');
       const selectedCoin = top100Data.slice().sort((a, b) => {
         if (a.market_cap_rank > b.market_cap_rank) {
           return 1;

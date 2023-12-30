@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { memo, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Alert } from 'react-native';
@@ -73,4 +73,4 @@ const ProvidedApp: React.FC = () => {
   );
 };
 
-export default ProvidedApp;
+export default memo(ProvidedApp);
