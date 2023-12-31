@@ -35,12 +35,12 @@ const categoryComponent = (categoryData: CoinGeckoTrendDataResponse['categories'
           <View style={[styles.categoryItemValuesContainer]}>
             <View style={styles.categoryItemValuesContainerSection}>
               <CategoryItemValue
-                value={`${(categoryItem.market_cap_1h_change * 100).toFixed(2)}%`}
+                value={`${categoryItem.market_cap_1h_change.toFixed(2)}%`}
                 title={'MarketCap (1h)'}
                 valueColor={categoryItem.market_cap_1h_change > 0 ? 'green' : 'red'}
               />
               <CategoryItemValue
-                value={`${(categoryItem.data.market_cap_change_percentage_24h.usd * 100).toFixed(2)}%`}
+                value={`${categoryItem.data.market_cap_change_percentage_24h.usd.toFixed(2)}%`}
                 title={'MarketCap (24h)'}
                 valueColor={categoryItem.data.market_cap_change_percentage_24h.usd > 0 ? 'green' : 'red'}
               />
@@ -76,7 +76,7 @@ const coinComponent = (coinData: CoinGeckoTrendDataResponse['coins']): JSX.Eleme
           <Text
             style={[styles.text, styles.textItemInfo, coinItem.item.data.price_change_percentage_24h.usd > 0 ? styles.greenText : styles.redtext]}
           >
-            {(coinItem.item.data.price_change_percentage_24h.usd * 100).toFixed(1)}%
+            {coinItem.item.data.price_change_percentage_24h.usd.toFixed(2)}%
           </Text>
           <Text style={[styles.text, styles.greenText, styles.textItemInfo]}>{coinItem.item.data.price}</Text>
         </View>
