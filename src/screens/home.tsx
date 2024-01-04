@@ -18,6 +18,7 @@ const Home: React.FC<HomeScreenProps> = () => {
   console.log('Home screen rendered!');
 
   const [coinInfoData, setCoinInfoData] = useState<CoinGeckoMarketDataItem[]>([]);
+  const [coinInfoDataOneTime, setCoinInfoDataOneTime] = useState<CoinGeckoMarketDataItem[]>([]);
   const [volume, setVolume] = useState('$0');
   const [totalSup, setTotalSup] = useState('-');
   const [maxSup, setMaxSup] = useState('-');
@@ -38,6 +39,27 @@ const Home: React.FC<HomeScreenProps> = () => {
   });
 
   const top100Data = useSelector((state: RootState) => state.top100Data);
+
+  const changeCoinInfoData = (coin: CoinGeckoMarketDataItem) => {
+    setSelectedSymbol(coin.symbol);
+    setVolume(formatMoney(coin.total_volume));
+    setMarketCap(formatMoney(coin.market_cap));
+    setTotalSup(coin.total_supply ? numberFormatter.format(coin.total_supply) : '--');
+    setMaxSup(coin.max_supply ? numberFormatter.format(coin.max_supply) : '--');
+    setAth(formatMoney(coin.ath));
+    setAtl(formatMoney(coin.atl));
+    setChange24h(formatMoney(coin.price_change_24h));
+    setHigh24h(formatMoney(coin.high_24h));
+    const coinCurrentPrice = coin.current_price > 1 ? Number(coin.current_price.toFixed(2)) : coin.current_price;
+
+    setCoinDetail({
+      name: coin.name,
+      logoUri: coin.image,
+      price: formatMoney(coinCurrentPrice),
+      rank: coin.market_cap_rank,
+      symbol: coin.symbol,
+    });
+  };
 
   const changeSort = useCallback(
     (selectedArrow: 'rank' | 'price' | 'percentageChange', currentSortBy: SortByTypes) => {
@@ -87,49 +109,34 @@ const Home: React.FC<HomeScreenProps> = () => {
       }
       setCoinInfoData(currentData);
     },
-    [coinInfoData]
+    [coinInfoDataOneTime]
   );
 
-  const changeSelectCoin = useCallback((symbol: string) => {
-    if (!symbol) return;
-
-    setSelectedSymbol(symbol);
-    const coin = coinInfoData.find((o) => o.symbol == symbol)!;
-    setVolume(formatMoney(coin.total_volume));
-    setMarketCap(formatMoney(coin.market_cap));
-    setTotalSup(coin.total_supply ? numberFormatter.format(coin.total_supply) : '--');
-    setMaxSup(coin.max_supply ? numberFormatter.format(coin.max_supply) : '--');
-    setAth(formatMoney(coin.ath));
-    setAtl(formatMoney(coin.atl));
-    setChange24h(formatMoney(coin.price_change_24h));
-    setHigh24h(formatMoney(coin.high_24h));
-    const coinCurrentPrice = coin.current_price > 1 ? Number(coin.current_price.toFixed(2)) : coin.current_price;
-
-    setCoinDetail({
-      name: coin.name,
-      logoUri: coin.image,
-      price: formatMoney(coinCurrentPrice),
-      rank: coin.market_cap_rank,
-      symbol: coin.symbol,
-    });
-  }, []);
+  const changeSelectCoin = useCallback(
+    (symbol: string) => {
+      const coin = coinInfoData.find((o) => o.symbol == symbol)!;
+      changeCoinInfoData(coin);
+    },
+    [coinInfoDataOneTime]
+  );
 
   useEffect(() => {
     console.log('HomeSCreen UseEffect(top100Data)');
     if (top100Data.length > 0) {
       setAnimatingVal(false);
       setCoinInfoData(top100Data);
+      setCoinInfoDataOneTime(top100Data);
       setSortBy('rankDesc');
-      const sSymbol = top100Data.slice().sort((a, b) => {
+      const sCoin = top100Data.slice().sort((a, b) => {
         if (a.market_cap_rank > b.market_cap_rank) {
           return 1;
         } else if (a.market_cap_rank < b.market_cap_rank) {
           return -1;
         }
         return 0;
-      })[0].symbol;
+      })[0];
 
-      changeSelectCoin(sSymbol);
+      changeCoinInfoData(sCoin);
     }
   }, [top100Data]);
 

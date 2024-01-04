@@ -57,6 +57,8 @@ const CoinListItem = ({
 const MCoinListItem = memo(CoinListItem);
 
 function GetCoinListItems(coinInfoData: CoinGeckoMarketDataItem[], selectCoinFunc: Function, selectedSymbol: string) {
+  console.log('GetCoinListItems()');
+
   let listItems = coinInfoData.map((o) => {
     const formattedPrice = formatMoney(o.current_price);
     const color: 'white' | 'black' = o.symbol == selectedSymbol ? 'white' : 'black';
