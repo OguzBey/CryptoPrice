@@ -2,14 +2,14 @@ import { memo, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Alert } from 'react-native';
-import HomeScreen from './screens/home';
-import TrendStatsScreen from './screens/trend-stats';
-import HeaderBackButton from './components/header-back-button';
-import HeaderRightButton from './components/header-right-button-text';
-import { fetchCryptoData, fetchTrendData } from './api/coingecko';
-import { loadTop100, loadTrends } from './redux/slice';
+import HomeScreen from './src/screens/home';
+import TrendStatsScreen from './src/screens/trend-stats';
+import HeaderBackButton from './src/components/header-back-button';
+import HeaderRightButton from './src/components/header-right-button-text';
+import { fetchCryptoData, fetchTrendData } from './src/api/coingecko';
+import { loadTop100, loadTrends } from './src/redux/slice';
 import { Provider, useDispatch } from 'react-redux';
-import store from './redux/store';
+import store from './src/redux/store';
 
 const Stack = createNativeStackNavigator();
 
@@ -18,8 +18,8 @@ const App: React.FC = () => {
 
   useEffect(() => {
     const fetchDataProcess = async () => {
-      const top100Data = await fetchCryptoData(100);
-      const trendsData = await fetchTrendData();
+      const top100Data = await fetchCryptoData(100, true);
+      const trendsData = await fetchTrendData(true);
 
       if (top100Data.length > 0) dispatch(loadTop100(top100Data));
       else Alert.alert('Error..', 'Api rate-limit. Crypto data not loading..');
