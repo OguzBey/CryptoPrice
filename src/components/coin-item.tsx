@@ -1,6 +1,7 @@
 import React, { memo, useRef } from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { fixedString } from '../helpers/utils';
+import { fixedString, formatMoney } from '../helpers/utils';
+import { CoinGeckoMarketDataItem } from '../types';
 
 type CoinListItemProps = {
   coinName: string;
@@ -26,7 +27,9 @@ const CoinListItem = ({
   priceChange24hPercentage,
 }: CoinListItemProps) => {
   console.log('CoinListItem rendered!', coinName);
+
   const textStylePercentage = priceChange24h && priceChange24h > 0 ? styles.textGreen : styles.textRed;
+
   return (
     <TouchableOpacity
       style={[styles.container, borderColor == 'white' ? styles.selectedContainer : styles.deSelectedContainer]}
@@ -50,6 +53,31 @@ const CoinListItem = ({
     </TouchableOpacity>
   );
 };
+
+const MCoinListItem = memo(CoinListItem);
+
+function GetCoinListItems(coinInfoData: CoinGeckoMarketDataItem[], selectCoinFunc: Function, selectedSymbol: string) {
+  let listItems = coinInfoData.map((o) => {
+    const formattedPrice = formatMoney(o.current_price);
+    const color: 'white' | 'black' = o.symbol == selectedSymbol ? 'white' : 'black';
+    return (
+      <MCoinListItem
+        key={o.symbol}
+        coinName={o.name}
+        logoUri={o.image}
+        price={formattedPrice}
+        rank={o.market_cap_rank}
+        selectFunc={selectCoinFunc}
+        symbol={o.symbol}
+        borderColor={color}
+        priceChange24h={o.price_change_24h}
+        priceChange24hPercentage={o.price_change_percentage_24h}
+      />
+    );
+  });
+
+  return listItems;
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -110,4 +138,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default memo(CoinListItem);
+export default GetCoinListItems;
