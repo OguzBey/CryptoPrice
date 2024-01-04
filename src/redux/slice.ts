@@ -1,14 +1,14 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { CoinGeckoTrendDataResponse, CoinMarketsResponseItem } from '../api/coingecko';
+import { CoinGeckoTrendDataResponse, CoinGeckoMarketDataItem } from '../types';
 
 const coingeckoSlice = createSlice({
   name: 'coingecko',
   initialState: {
-    top100Data: [] as CoinMarketsResponseItem[],
+    top100Data: [] as CoinGeckoMarketDataItem[],
     trendsData: { categories: [], coins: [], nfts: [] } as CoinGeckoTrendDataResponse,
   },
   reducers: {
-    loadTop100: (state, { payload }: { payload: CoinMarketsResponseItem[] }) => {
+    loadTop100: (state, { payload }: { payload: CoinGeckoMarketDataItem[] }) => {
       state.top100Data = payload;
     },
     loadTrends: (state, { payload }: { payload: CoinGeckoTrendDataResponse }) => {
