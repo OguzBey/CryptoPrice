@@ -4,7 +4,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ParamListBase } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
-import { CoinGeckoTrendDataResponse } from '../api/coingecko';
+import { CoinGeckoTrendDataResponse } from '../types';
 import { SvgUri } from 'react-native-svg';
 import { fixedString } from '../helpers/utils';
 
