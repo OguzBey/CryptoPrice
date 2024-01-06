@@ -1,5 +1,5 @@
 import { CoinGeckoMarketDataItem } from '../types';
-import { formatMoney, numberFormatter } from '../helpers/utils';
+import { formatMoney, formatNumberWithGroup, numberFormatter } from '../helpers/utils';
 import CoinInfo from '../components/coin-info';
 import GetCoinListItems from '../components/coin-item';
 import CoinPrice from '../components/coin-price';
@@ -22,7 +22,9 @@ const Home: React.FC<HomeScreenProps> = () => {
   const [volume, setVolume] = useState('$0');
   const [totalSup, setTotalSup] = useState('-');
   const [maxSup, setMaxSup] = useState('-');
+  const [circulatingSup, setCirculatingSup] = useState('-');
   const [marketCap, setMarketCap] = useState('$0');
+  const [fullyDilutedValuation, setFullyDilutedValuation] = useState('$0');
   const [ath, setAth] = useState('$0');
   const [atl, setAtl] = useState('$0');
   const [change24h, setChange24h] = useState('$0');
@@ -44,8 +46,10 @@ const Home: React.FC<HomeScreenProps> = () => {
     setSelectedSymbol(coin.symbol);
     setVolume(formatMoney(coin.total_volume));
     setMarketCap(formatMoney(coin.market_cap));
+    setFullyDilutedValuation(formatMoney(coin.fully_diluted_valuation));
     setTotalSup(coin.total_supply ? numberFormatter.format(coin.total_supply) : '--');
-    setMaxSup(coin.max_supply ? numberFormatter.format(coin.max_supply) : '--');
+    setMaxSup(coin.max_supply ? formatNumberWithGroup(coin.max_supply) : '--');
+    setCirculatingSup(coin.circulating_supply ? numberFormatter.format(coin.circulating_supply) : '--');
     setAth(formatMoney(coin.ath));
     setAtl(formatMoney(coin.atl));
     setChange24h(formatMoney(coin.price_change_24h));
@@ -147,10 +151,12 @@ const Home: React.FC<HomeScreenProps> = () => {
           <View style={{ ...styles.coinInfoTop, marginTop: 40 }}>
             <CoinInfo infoName="Volume" value={volume} customCss={{}} />
             <CoinInfo infoName="Market Cap" value={marketCap} customCss={{}} />
+            <CoinInfo infoName="Fully Dil. Val." value={fullyDilutedValuation} customCss={{}} />
           </View>
           <View style={{ ...styles.coinInfoTop, marginBottom: 10 }}>
-            <CoinInfo infoName="Max Supply" value={maxSup} customCss={{}} />
-            <CoinInfo infoName="Total Supply" value={totalSup} customCss={{}} />
+            {!maxSup.includes('-') && <CoinInfo infoName="Max" value={maxSup} customCss={{}} />}
+            {!totalSup.includes('-') && <CoinInfo infoName="Total" value={totalSup} customCss={{}} />}
+            {!circulatingSup.includes('-') && <CoinInfo infoName="Circulating" value={circulatingSup} customCss={{}} />}
           </View>
         </View>
 
