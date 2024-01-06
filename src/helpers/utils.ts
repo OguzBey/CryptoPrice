@@ -28,3 +28,13 @@ export const fixedString = function (strVal: string, maxLen = 10) {
   else if (strVal.length > maxLen && strVal[maxLen - 1] == ' ') return `${strVal.slice(0, maxLen + 2)}...`;
   else return strVal;
 };
+
+export const formatNumberWithGroup = function (value: number) {
+  if (value >= 1e9) {
+    return numberFormatter.format(value / 1e9) + 'B';
+  } else if (value >= 1e6) {
+    return numberFormatter.format(value / 1e6) + 'M';
+  } else {
+    return numberFormatter.format(value);
+  }
+};
