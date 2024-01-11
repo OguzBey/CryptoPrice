@@ -148,10 +148,12 @@ const Home: React.FC<HomeScreenProps> = () => {
     <View style={styles.container}>
       <View style={styles.containerTop}>
         <View style={styles.coinInfoTopContainer}>
-          <View style={{ ...styles.coinInfoTop, marginTop: 40 }}>
+          <View style={{ ...styles.coinInfoTop, marginTop: 0 }}>
+            <CoinInfo infoName="Fully Diluted Market Cap" value={fullyDilutedValuation} customCss={{}} />
+          </View>
+          <View style={{ ...styles.coinInfoTop, marginTop: 0 }}>
             <CoinInfo infoName="Volume" value={volume} customCss={{}} />
             <CoinInfo infoName="Market Cap" value={marketCap} customCss={{}} />
-            <CoinInfo infoName="Fully Dil. Val." value={fullyDilutedValuation} customCss={{}} />
           </View>
           <View style={{ ...styles.coinInfoTop, marginBottom: 10 }}>
             {!maxSup.includes('-') && <CoinInfo infoName="Max" value={maxSup} customCss={{}} />}
