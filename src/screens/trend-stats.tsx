@@ -24,7 +24,8 @@ const CategoryItemValue = ({ title, value, valueColor }: CategoryItemInfoProps):
   );
 };
 
-const categoryComponent = (categoryData: CoinGeckoTrendDataResponse['categories']): JSX.Element[] => {
+const categoryListComponent = (categoryData: CoinGeckoTrendDataResponse['categories']): JSX.Element[] => {
+  console.log('categoryListComponent Rendered!');
   const mapData = categoryData.map((categoryItem) => {
     return (
       <View style={styles.categoryItemContainer} key={categoryItem.id}>
@@ -61,7 +62,7 @@ const categoryComponent = (categoryData: CoinGeckoTrendDataResponse['categories'
   return mapData;
 };
 
-const coinComponent = (coinData: CoinGeckoTrendDataResponse['coins']): JSX.Element[] => {
+const coinListComponent = (coinData: CoinGeckoTrendDataResponse['coins']): JSX.Element[] => {
   const mapData = coinData.map((coinItem) => {
     return (
       <View style={styles.coinItemContainer} key={coinItem.item.coin_id}>
@@ -102,12 +103,14 @@ const TrendStats: React.FC<TrendStatsProps> = () => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.section}>
-        <View style={styles.sectionHeader}>
-          <Text style={[styles.text, styles.textHeader, styles.greenText]}>💸 Category 💸</Text>
+      {categoryData.length > 0 && (
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <Text style={[styles.text, styles.textHeader, styles.greenText]}>💸 Category 💸</Text>
+          </View>
+          <ScrollView>{categoryListComponent(categoryData)}</ScrollView>
         </View>
-        <ScrollView>{categoryComponent(categoryData)}</ScrollView>
-      </View>
+      )}
       <View style={styles.section}>
         <View style={styles.sectionHeader}>
           <Text style={[styles.text, styles.textHeader, styles.greenText]}>💰 Coin 💰</Text>
@@ -117,7 +120,7 @@ const TrendStats: React.FC<TrendStatsProps> = () => {
           <Text style={[styles.text, styles.whiteText, styles.textItemHeader]}>24h Change</Text>
           <Text style={[styles.text, styles.whiteText, styles.textItemHeader]}>Price</Text>
         </View>
-        <ScrollView>{coinComponent(trendsData.coins)}</ScrollView>
+        <ScrollView>{coinListComponent(trendsData.coins)}</ScrollView>
       </View>
     </View>
   );
@@ -139,6 +142,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: 'black',
+    paddingVertical: 10,
   },
 
   text: {
