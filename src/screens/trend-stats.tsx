@@ -103,11 +103,18 @@ const TrendStats: React.FC<TrendStatsProps> = () => {
   let pieChartData: { name: string; percentage: number; color: string; legendFontColor: string; legendFontSize: number }[] = [];
   if (globalData) {
     let colorCount = 0;
+    let totalPerc = 0;
     for (const coinKey of Object.keys(globalData.data.market_cap_percentage)) {
       const percentage = globalData.data.market_cap_percentage[coinKey];
       const color = colors[colorCount] || randomcolor();
       colorCount += 1;
+      totalPerc += percentage;
       pieChartData.push({ name: coinKey.toUpperCase(), percentage, color, legendFontSize, legendFontColor });
+    }
+
+    const otherPerc = 100 - totalPerc;
+    if (otherPerc > 0) {
+      pieChartData.push({ name: 'Other', percentage: otherPerc, color: randomcolor(), legendFontSize, legendFontColor });
     }
   }
 
