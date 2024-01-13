@@ -1,6 +1,6 @@
-import { coinGeckoCoinsMarketsMockData, coinGeckoTrendsMockData } from '../helpers/data';
+import { coinGeckoCoinsMarketsMockData, coinGeckoGlobalData, coinGeckoTrendsMockData } from '../helpers/data';
 import { to } from '../helpers/utils';
-import { CoinGeckoMarketDataItem, CoinGeckoTrendDataResponse } from '../types';
+import { CoinGeckoGlobalDataResponse, CoinGeckoMarketDataItem, CoinGeckoTrendDataResponse } from '../types';
 
 export const fetchCryptoData = async (limit: number, isDevMode = false) => {
   console.log('fetchCryptoData()');
@@ -78,6 +78,39 @@ export const fetchTrendData = async (isDevMode = false) => {
   }
 
   const data = dataExec.result as CoinGeckoTrendDataResponse;
+
+  return data;
+};
+
+export const fetchGlobalData = async (isDevMode = false) => {
+  console.log('fetchGlobalData()');
+
+  if (isDevMode) return coinGeckoGlobalData;
+
+  const url = 'https://api.coingecko.com/api/v3/global';
+  const reqInit: RequestInit = {
+    method: 'GET',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+  };
+
+  const fetchExec = await to(fetch(url, reqInit));
+
+  if ('error' in fetchExec) {
+    console.error(fetchExec.error);
+    return null;
+  }
+
+  const dataExec = await to(fetchExec.result.json());
+
+  if ('error' in dataExec) {
+    console.error(dataExec.error);
+    return null;
+  }
+
+  const data = dataExec.result as CoinGeckoGlobalDataResponse;
 
   return data;
 };
