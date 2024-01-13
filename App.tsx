@@ -18,9 +18,9 @@ const App: React.FC = () => {
 
   useEffect(() => {
     const fetchDataProcess = async () => {
-      const top100Data = await fetchCryptoData(100, true);
-      const trendsData = await fetchTrendData(true);
-      const globalData = await fetchGlobalData(true);
+      const top100Data = await fetchCryptoData(100);
+      const trendsData = await fetchTrendData();
+      const globalData = await fetchGlobalData();
 
       if (top100Data.length > 0) dispatch(loadTop100(top100Data));
       else Alert.alert('Error..', 'Api rate-limit. Crypto data not loading..');

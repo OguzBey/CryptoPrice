@@ -1,12 +1,14 @@
 import { memo, useState } from 'react';
-import { StyleSheet, Text, View, ScrollView, Image } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, Image, Dimensions } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ParamListBase } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 import { CoinGeckoTrendDataResponse } from '../types';
 import { SvgUri } from 'react-native-svg';
-import { fixedString } from '../helpers/utils';
+import { fixedString, formatMoney } from '../helpers/utils';
+import { PieChart } from 'react-native-chart-kit';
+import randomcolor from 'randomcolor';
 
 type TrendStatsProps = NativeStackScreenProps<ParamListBase, 'TrendStats'>;
 
@@ -89,8 +91,25 @@ const coinListComponent = (coinData: CoinGeckoTrendDataResponse['coins']): JSX.E
 };
 
 const TrendStats: React.FC<TrendStatsProps> = () => {
+  const globalData = useSelector((state: RootState) => state.globalData);
   const trendsData = useSelector((state: RootState) => state.trendsData);
   const categoryData = [...trendsData.categories];
+  const screenWidth = Dimensions.get('window').width;
+
+  const colors: string[] = ['#4CAF50', '#2196F3', '#FFEB3B', '#F44336', '#9C27B0', '#795548', '#FF9800', '#9E9E9E', '#3F51B5', '#607D8B'];
+  const legendFontColor = '#FFFFFF';
+  const legendFontSize = 14;
+
+  let pieChartData: { name: string; percentage: number; color: string; legendFontColor: string; legendFontSize: number }[] = [];
+  if (globalData) {
+    let colorCount = 0;
+    for (const coinKey of Object.keys(globalData.data.market_cap_percentage)) {
+      const percentage = globalData.data.market_cap_percentage[coinKey];
+      const color = colors[colorCount] || randomcolor();
+      colorCount += 1;
+      pieChartData.push({ name: coinKey.toUpperCase(), percentage, color, legendFontSize, legendFontColor });
+    }
+  }
 
   // sort categories
   categoryData.sort((pItem, nItem) => {
@@ -102,13 +121,36 @@ const TrendStats: React.FC<TrendStatsProps> = () => {
   });
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
+      {globalData != null && (
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <Text style={[styles.text, styles.textHeader, styles.greenText]}>🚀 Global Market 🚀</Text>
+          </View>
+          <View style={styles.sectionValueContainer}>
+            <Text style={[styles.text, styles.textHeader, styles.whiteText]}>Domination</Text>
+            <Text style={[styles.text, styles.textItemHeader2, styles.greenText]}>{formatMoney(globalData.data.total_market_cap.usd)}</Text>
+            <PieChart
+              data={pieChartData}
+              width={screenWidth}
+              height={220}
+              chartConfig={{
+                color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+                labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+              }}
+              accessor={'percentage'}
+              backgroundColor={'transparent'}
+              paddingLeft={'25'}
+            />
+          </View>
+        </View>
+      )}
       {categoryData.length > 0 && (
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={[styles.text, styles.textHeader, styles.greenText]}>💸 Category 💸</Text>
           </View>
-          <ScrollView>{categoryListComponent(categoryData)}</ScrollView>
+          <View>{categoryListComponent(categoryData)}</View>
         </View>
       )}
       <View style={styles.section}>
@@ -120,9 +162,9 @@ const TrendStats: React.FC<TrendStatsProps> = () => {
           <Text style={[styles.text, styles.whiteText, styles.textItemHeader]}>24h Change</Text>
           <Text style={[styles.text, styles.whiteText, styles.textItemHeader]}>Price</Text>
         </View>
-        <ScrollView>{coinListComponent(trendsData.coins)}</ScrollView>
+        <View>{coinListComponent(trendsData.coins)}</View>
       </View>
-    </View>
+    </ScrollView>
   );
 };
 
@@ -145,6 +187,14 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
 
+  sectionValueContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 10,
+  },
+
   text: {
     fontFamily: 'RobotoMono-Medium',
   },
@@ -153,6 +203,9 @@ const styles = StyleSheet.create({
   },
   textItemHeader: {
     fontSize: 16,
+  },
+  textItemHeader2: {
+    fontSize: 14,
   },
   textItemInfo: {
     fontSize: 12,
