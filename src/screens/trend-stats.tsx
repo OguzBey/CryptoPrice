@@ -29,6 +29,9 @@ const CategoryItemValue = ({ title, value, valueColor }: CategoryItemInfoProps):
 const categoryListComponent = (categoryData: CoinGeckoTrendDataResponse['categories']): JSX.Element[] => {
   console.log('categoryListComponent Rendered!');
   const mapData = categoryData.map((categoryItem) => {
+    const marketCapPerc24h = categoryItem.data.market_cap_change_percentage_24h.usd || 0;
+    const marketCapPercm24hUsdStr = marketCapPerc24h != 0 ? `${marketCapPerc24h.toFixed(2)}%` : '-';
+    const color = marketCapPerc24h > 0 ? 'green' : 'red';
     return (
       <View style={styles.categoryItemContainer} key={categoryItem.id}>
         <View style={[styles.categoryItemHeader]}>
@@ -37,25 +40,25 @@ const categoryListComponent = (categoryData: CoinGeckoTrendDataResponse['categor
         <View style={[styles.categoryItemBody]}>
           <View style={[styles.categoryItemValuesContainer]}>
             <View style={styles.categoryItemValuesContainerSection}>
+              <CategoryItemValue value={`${categoryItem.coins_count}`} title="Coins Count" valueColor="green" />
+              <SvgUri uri={categoryItem.data.sparkline} width="50" />
+            </View>
+            <View style={styles.categoryItemValuesContainerSection}>
               <CategoryItemValue
                 value={`${categoryItem.market_cap_1h_change.toFixed(2)}%`}
                 title={'MarketCap (1h)'}
                 valueColor={categoryItem.market_cap_1h_change > 0 ? 'green' : 'red'}
               />
-              <CategoryItemValue
-                value={`${categoryItem.data.market_cap_change_percentage_24h.usd.toFixed(2)}%`}
-                title={'MarketCap (24h)'}
-                valueColor={categoryItem.data.market_cap_change_percentage_24h.usd > 0 ? 'green' : 'red'}
-              />
+              <CategoryItemValue value={marketCapPercm24hUsdStr} title={'MarketCap (24h)'} valueColor={color} />
             </View>
-            {/* <View style={styles.categoryItemValuesContainerSection}>
+            <View style={styles.categoryItemValuesContainerSection}>
               <CategoryItemValue value={`${formatMoney(categoryItem.data.market_cap)}`} title="MarketCap" valueColor="green" />
               <CategoryItemValue value={formatMoney(categoryItem.data.total_volume)} title="Total Volume" valueColor="green" />
-            </View> */}
+            </View>
           </View>
-          <View style={[styles.categoryItemSparkContainer]}>
+          {/* <View style={[styles.categoryItemSparkContainer]}>
             <SvgUri uri={categoryItem.data.sparkline} width="50" />
-          </View>
+          </View> */}
         </View>
       </View>
     );
@@ -66,6 +69,8 @@ const categoryListComponent = (categoryData: CoinGeckoTrendDataResponse['categor
 
 const coinListComponent = (coinData: CoinGeckoTrendDataResponse['coins']): JSX.Element[] => {
   const mapData = coinData.map((coinItem) => {
+    const coinPriceChange24hUsd = coinItem.item.data.price_change_percentage_24h.usd || 0;
+
     return (
       <View style={styles.coinItemContainer} key={coinItem.item.coin_id}>
         <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
@@ -76,10 +81,8 @@ const coinListComponent = (coinData: CoinGeckoTrendDataResponse['coins']): JSX.E
           <Text style={[styles.text, styles.whiteText, styles.textItemMini]}>(${coinItem.item.symbol})</Text>
         </View>
         <View style={{ flex: 6, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-          <Text
-            style={[styles.text, styles.textItemInfo, coinItem.item.data.price_change_percentage_24h.usd > 0 ? styles.greenText : styles.redtext]}
-          >
-            {coinItem.item.data.price_change_percentage_24h.usd.toFixed(2)}%
+          <Text style={[styles.text, styles.textItemInfo, coinPriceChange24hUsd > 0 ? styles.greenText : styles.redtext]}>
+            {coinPriceChange24hUsd != 0 ? coinPriceChange24hUsd.toFixed(2) : '-'}%
           </Text>
           <Text style={[styles.text, styles.greenText, styles.textItemInfo]}>{coinItem.item.data.price}</Text>
         </View>
@@ -120,12 +123,14 @@ const TrendStats: React.FC<TrendStatsProps> = () => {
 
   // sort categories
   categoryData.sort((pItem, nItem) => {
-    const pItemData = Math.abs(pItem.data.market_cap_change_percentage_24h.usd);
-    const nItemData = Math.abs(nItem.data.market_cap_change_percentage_24h.usd);
+    const pItemData = Math.abs(pItem.data.market_cap_change_percentage_24h.usd || 0);
+    const nItemData = Math.abs(nItem.data.market_cap_change_percentage_24h.usd || 0);
     if (pItemData > nItemData) return 1;
     else if (pItemData == nItemData) return 0;
     else return -1;
   });
+
+  const totalMarketCapUsd = globalData != null ? globalData.data.total_market_cap.usd || 0 : 0;
 
   return (
     <ScrollView style={styles.container}>
@@ -136,7 +141,7 @@ const TrendStats: React.FC<TrendStatsProps> = () => {
           </View>
           <View style={styles.sectionValueContainer}>
             <Text style={[styles.text, styles.textHeader, styles.whiteText]}>Domination</Text>
-            <Text style={[styles.text, styles.textItemHeader2, styles.greenText]}>{formatMoney(globalData.data.total_market_cap.usd)}</Text>
+            {totalMarketCapUsd != 0 && <Text style={[styles.text, styles.textItemHeader2, styles.greenText]}>{formatMoney(totalMarketCapUsd)}</Text>}
             <PieChart
               data={pieChartData}
               width={screenWidth}
@@ -240,6 +245,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+    flexDirection: 'row',
   },
   categoryItemBody: {
     display: 'flex',
