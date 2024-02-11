@@ -3,12 +3,13 @@ import { formatMoney, formatNumberWithGroup, numberFormatter } from '../helpers/
 import CoinInfo from '../components/coin-info';
 import GetCoinListItems from '../components/coin-item';
 import CoinPrice from '../components/coin-price';
-import { memo, useCallback, useEffect, useState } from 'react';
-import { ActivityIndicator, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { memo, useCallback, useEffect, useRef, useState } from 'react';
+import { ActivityIndicator, Animated, Easing, Image, ScrollView, StyleSheet, Text, TouchableHighlight, TouchableOpacity, View } from 'react-native';
 import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootState } from '../redux/store';
 import { useSelector } from 'react-redux';
+import AnimatedSortOption from '../components/animated-sort-option';
 
 type SortByTypes = 'rankDesc' | 'rankAsc' | 'priceDesc' | 'priceAsc' | 'changePercentageAsc' | 'changePercentageDesc';
 
@@ -184,51 +185,30 @@ const Home: React.FC<HomeScreenProps> = () => {
       ) : (
         <View style={styles.containerBottom}>
           <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 5 }}>
-            <TouchableOpacity style={styles.sortByItemContainer} onPress={() => changeSort('rank', sortBy)}>
-              <Text style={styles.sortByText}>Rank</Text>
-              <Image
-                source={
-                  sortBy == 'rankAsc'
-                    ? require('../assets/arrow-up.png')
-                    : sortBy == 'rankDesc'
-                    ? require('../assets/arrow-down.png')
-                    : require('../assets/line.png')
-                }
-                style={styles.sortByImage}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.sortByItemContainer, { marginLeft: 15, justifyContent: 'flex-end' }]}
+            <AnimatedSortOption
+              text="Rank"
+              sortBy={sortBy}
+              ascSortValue="rankAsc"
+              descSortValue="rankDesc"
+              onPress={() => changeSort('rank', sortBy)}
+              customCss={{}}
+            />
+            <AnimatedSortOption
+              text="Price"
+              sortBy={sortBy}
+              ascSortValue="priceAsc"
+              descSortValue="priceDesc"
               onPress={() => changeSort('price', sortBy)}
-            >
-              <Text style={styles.sortByText}>Price</Text>
-              <Image
-                source={
-                  sortBy == 'priceAsc'
-                    ? require('../assets/arrow-up.png')
-                    : sortBy == 'priceDesc'
-                    ? require('../assets/arrow-down.png')
-                    : require('../assets/line.png')
-                }
-                style={styles.sortByImage}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.sortByItemContainer, { justifyContent: 'flex-end' }]}
+              customCss={{ marginLeft: 15 }}
+            />
+            <AnimatedSortOption
+              text="Change"
+              sortBy={sortBy}
+              ascSortValue="changePercentageAsc"
+              descSortValue="changePercentageDesc"
               onPress={() => changeSort('percentageChange', sortBy)}
-            >
-              <Text style={styles.sortByText}>Change</Text>
-              <Image
-                source={
-                  sortBy == 'changePercentageAsc'
-                    ? require('../assets/arrow-up.png')
-                    : sortBy == 'changePercentageDesc'
-                    ? require('../assets/arrow-down.png')
-                    : require('../assets/line.png')
-                }
-                style={styles.sortByImage}
-              />
-            </TouchableOpacity>
+              customCss={{ justifyContent: 'flex-end' }}
+            />
           </View>
           <ScrollView>{GetCoinListItems(coinInfoData, changeSelectCoin, selectedSymbol)}</ScrollView>
         </View>
@@ -278,6 +258,8 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
+    paddingVertical: 10,
+    paddingHorizontal: 4,
   },
   sortByText: {
     color: 'white',
