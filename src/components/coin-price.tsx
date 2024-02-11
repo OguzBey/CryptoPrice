@@ -1,5 +1,6 @@
 import React, { memo } from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
+import AnimatedNumber from './animated-number';
 
 type CoinPriceProps = {
   name: string;
@@ -10,13 +11,14 @@ type CoinPriceProps = {
 
 const CoinPrice = ({ name, logoUri, price, rank }: CoinPriceProps) => {
   console.log('CoinPrice rendered!');
+
   return (
     <View style={styles.container}>
       <Image source={{ uri: logoUri }} style={styles.coinLogo} />
       <Text style={styles.coinPriceHeader}>
         {name} (#{rank})
       </Text>
-      <Text style={styles.coinPriceValue}>{price}</Text>
+      <AnimatedNumber customCss={styles.coinPriceValue} value={price} />
     </View>
   );
 };

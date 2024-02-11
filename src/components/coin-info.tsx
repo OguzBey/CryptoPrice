@@ -1,5 +1,6 @@
 import React, { memo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import AnimatedNumber from './animated-number';
 
 type CoinInfoProps = {
   infoName: string;
@@ -11,7 +12,7 @@ const CoinInfo = (props: CoinInfoProps) => {
   return (
     <View style={{ ...styles.container, ...props.customCss }}>
       <Text style={styles.coinInfoHeader}>{props.infoName}</Text>
-      <Text style={styles.coinInfoValue}>{props.value}</Text>
+      <AnimatedNumber customCss={styles.coinInfoValue} value={props.value} />
     </View>
   );
 };
