@@ -15,14 +15,14 @@ type TrendStatsProps = NativeStackScreenProps<ParamListBase, 'TrendStats'>;
 
 const TrendStats: React.FC<TrendStatsProps> = () => {
   console.log('TrendStats rendered!!!');
-  const globalData = useSelector((state: RootState) => state.globalData);
-  const trendsData = useSelector((state: RootState) => state.trendsData);
   const [categoryData, setCategoryData] = useState([] as CoinGeckoTrendCategoryItem[]);
   const [pieChardData, setPieChartData] = useState(
     [] as { name: string; percentage: number; color: string; legendFontColor: string; legendFontSize: number }[]
   );
-  console.log(categoryData.length);
-  // const categoryData = [...trendsData.categories];
+
+  const globalData = useSelector((state: RootState) => state.globalData);
+  const trendsData = useSelector((state: RootState) => state.trendsData);
+
   const screenWidth = Dimensions.get('window').width;
 
   const totalMarketCapUsd = globalData != null ? globalData.data.total_market_cap.usd || 0 : 0;
@@ -61,7 +61,7 @@ const TrendStats: React.FC<TrendStatsProps> = () => {
       else return -1;
     });
     setCategoryData(cData);
-  }, []);
+  }, [globalData, trendsData]);
 
   return (
     <ScrollView style={styles.container}>
@@ -88,12 +88,14 @@ const TrendStats: React.FC<TrendStatsProps> = () => {
           </View>
         </View>
       )}
-      <View style={styles.section}>
-        <View style={styles.sectionHeader}>
-          <Text style={[styles.text, styles.textHeader, styles.greenText]}>💸 Category 💸</Text>
+      {categoryData.length > 0 && (
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <Text style={[styles.text, styles.textHeader, styles.greenText]}>💸 Category 💸</Text>
+          </View>
+          <View>{categoryListComponent(categoryData)}</View>
         </View>
-        <View>{categoryListComponent(categoryData)}</View>
-      </View>
+      )}
       <View style={styles.section}>
         <View style={styles.sectionHeader}>
           <Text style={[styles.text, styles.textHeader, styles.greenText]}>💰 Coin 💰</Text>

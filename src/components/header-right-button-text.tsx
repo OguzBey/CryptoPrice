@@ -12,7 +12,6 @@ type HeaderBackButtonProps = {
 function HeaderRightButton(props: HeaderBackButtonProps) {
   return (
     <TouchableOpacity style={styles.container} onPress={() => props.navigation.navigate(props.screenName)}>
-      {/* <Text style={styles.text}>{props.displayText}</Text> */}
       <Image source={require('../assets/back.png')} style={styles.image} />
     </TouchableOpacity>
   );
