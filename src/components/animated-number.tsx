@@ -17,9 +17,9 @@ const AnimatedNumber = (props: AnimatedNumberProps) => {
     Animated.timing(animatedValue, {
       toValue: fixedValue,
       useNativeDriver: true,
-      duration: 200,
+      duration: 500,
       easing: Easing.cubic,
-    }).start((result) => {
+    }).start(() => {
       animatedValue.removeAllListeners();
       animatedValue.setValue(0);
       setCurrentValue(props.value);
