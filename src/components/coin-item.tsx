@@ -64,7 +64,7 @@ function GetCoinListItems(coinInfoData: CoinGeckoMarketDataItem[], selectCoinFun
     const color: 'white' | 'black' = o.symbol == selectedSymbol ? 'white' : 'black';
     return (
       <MCoinListItem
-        key={o.symbol}
+        key={o.id}
         coinName={o.name}
         logoUri={o.image}
         price={formattedPrice}
